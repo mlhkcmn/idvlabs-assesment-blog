@@ -1,7 +1,7 @@
 import { Card, CardActionArea, CardMedia, CardContent, Typography, CardActions, IconButton, Grid, Modal } from "@mui/material"
 import { Settings, Delete } from '@material-ui/icons'
 import blogcard from "../../images/blogcard.jpeg"
-import CreatePost from "../NewPostModal/NewPostModal"
+import CreatePost from "../NewPostModal"
 import { FC, useEffect, useState } from "react"
 import {
     ModalBox,

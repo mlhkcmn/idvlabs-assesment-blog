@@ -4,7 +4,7 @@ import {
   Container, 
   Grid 
 } from '@mui/material'
-import UserPost from '../../components/UserPost/UserPost';
+import UserPost from '../../components/UserPost';
 
 const MyPosts :FC = () => {
   useEffect(() => {

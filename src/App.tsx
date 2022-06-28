@@ -1,6 +1,6 @@
 import { Suspense, FC } from 'react'
 import { BrowserRouter as HashRouter, Route, Routes } from 'react-router-dom'
-import BlogFullCard from './components/BlogFullCard/BlogFullCard';
+import BlogFullCard from './components/BlogFullCard';
 import Navbar from './components/Navbar';
 import Homepage from './pages/Homepage';
 import Login from './pages/Login';

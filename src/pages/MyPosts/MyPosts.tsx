@@ -19,7 +19,7 @@ const MyPosts :FC = () => {
     <>
       <Container maxWidth="md">
         <Grid container spacing={2} sx={{ marginTop: '5px' }}>
-          <UserPost />
+          <UserPost  />
         </Grid>
       </Container>
     </>

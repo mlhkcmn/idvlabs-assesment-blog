@@ -10,18 +10,24 @@ import {
     ModalInput
 } from "./styled"
 import axios from "axios"
-
-type TPost = {
-    id: number;
-    header: string;
-    description: string;
-    createDate?: string;
-    userId: number;
-    userName?: string;
-}
+import { updatePost, TPost } from '../../services/postServices'
 
 const UserPost: FC = () => {
     const [posts, setPosts] = useState<TPost[]>([]);
+    const [updateId, setUpdateId] = useState<number>();
+    const [value, setValue] = useState<TPost>({
+        id: 0,
+        header: '',
+        description: '',
+        userName: (localStorage.getItem('userName') || ''),
+        userId: parseInt(localStorage.getItem('userId') || '0')
+    })
+
+    const onChangeInput = (e: { target: { name: any; value: any; } }) => {
+        const { name } = e.target;
+        let inputValue = e.target.value
+        setValue({ ...value, [name]: inputValue })
+    }
 
     const postData = async () => {
         try {
@@ -59,6 +65,10 @@ const UserPost: FC = () => {
         }
     }
 
+    const updatePostf = async () => {
+        await updatePost(value, updateId || 0)
+    }
+
     useEffect(() => {
         postData();
     }, []);
@@ -78,14 +88,14 @@ const UserPost: FC = () => {
                     <Grid container spacing={1} justifyContent="center" alignItems="center">
                         <Grid item xs={12}>
                             <ModalText>Header</ModalText>
-                            <ModalInput size="medium" placeholder='Header' fullWidth name='header' id='header' />
+                            <ModalInput size="medium" placeholder='Header' fullWidth name='header' id='header' onChange={(e) => onChangeInput(e)} />
                         </Grid>
                         <Grid item xs={12}>
                             <ModalText>Description</ModalText>
-                            <ModalInput multiline rows={5} size="medium" placeholder='Description' fullWidth name='description' id='description' />
+                            <ModalInput multiline rows={5} size="medium" placeholder='Description' fullWidth name='description' id='description' onChange={(e) => onChangeInput(e)}  />
                         </Grid>
                         <Grid item xs={12}>
-                            <ModalAddButton>
+                            <ModalAddButton onClick={() => updatePostf()}>
                                 Update
                             </ModalAddButton>
                         </Grid>
@@ -115,7 +125,7 @@ const UserPost: FC = () => {
                                 </CardContent>
                             </CardActionArea>
                             <CardActions sx={{ justifyContent: 'flex-end' }}>
-                                <IconButton onClick={() => handleOpen()}>
+                                <IconButton onClick={() => {handleOpen();setUpdateId(post.id)}}>
                                     <Settings />
                                 </IconButton>
                                 <IconButton onClick={() => deletePost(post.id)}>

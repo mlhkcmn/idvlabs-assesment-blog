@@ -1,5 +1,4 @@
 import { FC , useState, useEffect } from 'react'
-import axios from 'axios'
 import moment from 'moment'
 import blogcard from "../../images/blogcard.jpeg"
 import SearchIcon from '@mui/icons-material/Search'
@@ -46,7 +45,7 @@ const BlogCard :FC = () => {
                     return (
                         <Grid item xs={12} sm={6} md={4}>
                             <Card>
-                                <CardActionArea href='/blog-full-page'
+                                <CardActionArea href='/blog-full-card'
                                     onClick={() => localStorage.setItem('postId', post.id.toString())}>
                                     <CardMedia
                                         sx={{ height: 240 }}

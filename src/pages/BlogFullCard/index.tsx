@@ -1,12 +1,11 @@
-import { FC } from 'react'
-import BlogCard from '../../components/BlogFullCard/BlogFullCard'
+import BlogFullCard from '../../components/BlogFullCard/BlogFullCard'
 
-const BlogFullCard = () => {
+const BlogCard = () => {
   return (
     <>
-      <BlogCard />
+      <BlogFullCard />
     </>
   )
 }
 
-export default BlogFullCard
+export default BlogCard

@@ -1,7 +1,6 @@
-import { Card, Box, TextField, CardActionArea, CardMedia, CardContent, Typography, CardActions, IconButton, Grid, Modal } from "@mui/material"
+import { Card, CardActionArea, CardMedia, CardContent, Typography, CardActions, IconButton, Grid, Modal } from "@mui/material"
 import { Settings, Delete } from '@material-ui/icons'
 import blogcard from "../../images/blogcard.jpeg"
-import SearchIcon from '@mui/icons-material/Search'
 import CreatePost from "../NewPostModal/NewPostModal"
 import { FC, useEffect, useState } from "react"
 import {
@@ -12,17 +11,19 @@ import {
 } from "./styled"
 import axios from "axios"
 
-interface IPost {
+type TPost = {
     id: number;
     header: string;
     description: string;
     createDate?: string;
+    userId: number;
+    userName?: string;
 }
 
 const UserPost: FC = () => {
-    const [posts, setPosts] = useState<IPost[]>([]);
+    const [posts, setPosts] = useState<TPost[]>([]);
 
-    const recipeData = async () => {
+    const postData = async () => {
         try {
             const res = await axios.get(`https://localhost:7050/api/Posts/byUserId/${localStorage.getItem('userId')}`);
             setPosts(res.data);
@@ -32,9 +33,35 @@ const UserPost: FC = () => {
         }
     };
 
+    const deletePost = async (id: number) => {
+        try {
+            const { data, status } = await axios.delete<TPost>(
+                `https://localhost:7050/api/Posts/${id}`,
+                {
+                    headers: {
+                        Accept: 'application/json'
+                    },
+                },
+            );
+            console.log('response is: ', data);
+            console.log('response status is: ', status);
+            postData();
+            return data;
+
+        } catch (error) {
+            if (axios.isAxiosError(error)) {
+                console.log('error message: ', error.message);
+                return error.message;
+            } else {
+                console.log('unexpected error: ', error);
+                return 'An unexpected error occurred';
+            }
+        }
+    }
+
     useEffect(() => {
-        recipeData();
-      }, []);
+        postData();
+    }, []);
 
     const [open, setOpen] = useState(false);
     const handleOpen = () => setOpen(true);
@@ -47,34 +74,25 @@ const UserPost: FC = () => {
                 aria-labelledby="modal-modal-title"
                 aria-describedby="modal-modal-description"
             >
-
                 <ModalBox>
-                    <form>
-                        <Grid container spacing={1} justifyContent="center" alignItems="center">
-                            <Grid item xs={12}>
-                                <ModalText>Header</ModalText>
-                                <ModalInput size="medium" placeholder='Header' fullWidth name='header' id='header' />
-                            </Grid>
-                            <Grid item xs={12}>
-                                <ModalText>Description</ModalText>
-                                <ModalInput multiline rows={5} size="medium" placeholder='Description' fullWidth name='description' id='description' />
-                            </Grid>
-                            <Grid item xs={12}>
-                                <ModalAddButton type='submit'>
-                                    Add Post
-                                </ModalAddButton>
-                            </Grid>
+                    <Grid container spacing={1} justifyContent="center" alignItems="center">
+                        <Grid item xs={12}>
+                            <ModalText>Header</ModalText>
+                            <ModalInput size="medium" placeholder='Header' fullWidth name='header' id='header' />
                         </Grid>
-                    </form>
+                        <Grid item xs={12}>
+                            <ModalText>Description</ModalText>
+                            <ModalInput multiline rows={5} size="medium" placeholder='Description' fullWidth name='description' id='description' />
+                        </Grid>
+                        <Grid item xs={12}>
+                            <ModalAddButton>
+                                Update
+                            </ModalAddButton>
+                        </Grid>
+                    </Grid>
                 </ModalBox>
             </Modal>
-            <Grid item sx={{ width: '66%' }}>
-                <Box sx={{ display: 'flex', alignItems: 'flex-end' }}>
-                    <SearchIcon sx={{ color: 'action.active', mr: 1, my: 0.5 }} />
-                    <TextField label="Search Blog" variant="standard" sx={{ width: '495px' }} />
-                </Box>
-            </Grid>
-            <Grid item sx={{ width: '34%' }}>
+            <Grid item>
                 <CreatePost />
             </Grid>
             {posts.map(post => {
@@ -97,10 +115,10 @@ const UserPost: FC = () => {
                                 </CardContent>
                             </CardActionArea>
                             <CardActions sx={{ justifyContent: 'flex-end' }}>
-                                <IconButton onClick={handleOpen}>
+                                <IconButton onClick={() => handleOpen()}>
                                     <Settings />
                                 </IconButton>
-                                <IconButton>
+                                <IconButton onClick={() => deletePost(post.id)}>
                                     <Delete />
                                 </IconButton>
                             </CardActions>
@@ -113,3 +131,4 @@ const UserPost: FC = () => {
 }
 
 export default UserPost
+

@@ -3,7 +3,6 @@ import axios from 'axios'
 import moment from 'moment'
 import blogcard from "../../images/blogcard.jpeg"
 import SearchIcon from '@mui/icons-material/Search'
-
 import { 
     CardActionArea, 
     CardMedia, 
@@ -15,30 +14,17 @@ import {
     Card, 
     TextField 
 } from '@mui/material'
-
-type IPosts = {
-    id: number;
-    header: string;
-    description: string;
-    createDate?: string;
-    username?: string;
-}
+import { getAllPosts, TPost} from '../../services/postServices'
 
 const BlogCard :FC = () => {
-    const [posts, setPosts] = useState<IPosts[]>([]);
+    const [posts, setPosts] = useState<TPost[]>([]);
     const [search, setSearch] = useState('')
-    const postData = async () => {
-        try {
-            const res = await axios.get('https://localhost:7050/api/Posts');
-            
-            setPosts(res.data);
-            console.log(res);
-        } catch (error) {
-            console.log(error);
-        }
-    };
+    const getPosts = async () => {
+        setPosts(await getAllPosts())
+    }
+
     useEffect(() => {
-        postData();
+        getPosts();
     }, []);
 
     return (
@@ -60,7 +46,8 @@ const BlogCard :FC = () => {
                     return (
                         <Grid item xs={12} sm={6} md={4}>
                             <Card>
-                                <CardActionArea>
+                                <CardActionArea href='/blog-full-page'
+                                    onClick={() => localStorage.setItem('postId', post.id.toString())}>
                                     <CardMedia
                                         sx={{ height: 240 }}
                                         image={blogcard}
@@ -79,7 +66,7 @@ const BlogCard :FC = () => {
                                     <Box>
                                         <Box ml={2}>
                                             <Typography variant="subtitle2" color="textSecondary" component="h3">
-                                                Author : "{post.username}"
+                                                Author : "{post.userName}"
                                             </Typography>
                                             <Typography variant="subtitle2" color="textSecondary" component="p">
                                                 Created : {moment(post.createDate).format('DD.MM.YYYY , h:mm:s')}
